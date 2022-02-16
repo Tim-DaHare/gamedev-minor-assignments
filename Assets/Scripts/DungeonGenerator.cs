@@ -32,10 +32,10 @@ public class DungeonGenerator : MonoBehaviour
         public int Width { get; }
         public int Length { get; }
 
-        public bool DoesOverlapWith(Room room)
-        {
-        
-        }
+        // public bool DoesOverlapWith(Room room)
+        // {
+        //
+        // }
     }
 
     private CellState[,] _gridData;
