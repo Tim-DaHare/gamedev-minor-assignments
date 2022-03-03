@@ -28,5 +28,10 @@
         {
             return new PlayerRunningState(_currCtx, this);
         }
+        
+        public PlayerSlidingState Sliding()
+        {
+            return new PlayerSlidingState(_currCtx, this, true);
+        }
     }
 }

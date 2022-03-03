@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public float Speed = 5f;
     
     /// <summary>
-    /// The speed at which the player can run on "Sprint" around
+    /// The speed at which the player can run or "Sprint" around
     /// </summary>
     public float RunSpeed = 10f;
     
@@ -29,10 +29,12 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private PlayerMovementStateFactory _movementStates;
 
+    [SerializeField] private Transform cam; 
+
     public Vector3 InputDir { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
 
-    public string test;
+    public Vector3 test;
     
     private void Start()
     {
@@ -46,12 +48,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        InputDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        
+        InputDir = Quaternion.FromToRotation(cam.up, Vector3.up) * cam.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
+        // InputDir = Quaternion.Euler(0, cam.transform.rotation.y, 0) * cam.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
+
+        test = InputDir;
+
         // update state
         _currentMovementState.Update();
-
-        test = _currentMovementState.GetType().ToString();
     }
 
     private void FixedUpdate()

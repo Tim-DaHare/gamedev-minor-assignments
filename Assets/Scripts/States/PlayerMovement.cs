@@ -63,7 +63,7 @@ namespace States
 
         public override void Enter()
         {
-            _currSubState?.Enter();;
+            _currSubState?.Enter();
         }
 
         public override void Update()
@@ -105,12 +105,12 @@ namespace States
     
         public override void Enter()
         {
-            Debug.Log("Enter Idle");
+            // Debug.Log("Enter Idle");
         }
 
         public override void Exit()
         {
-            Debug.Log("Exit Idle");
+            // Debug.Log("Exit Idle");
         }
     }
 
@@ -121,39 +121,84 @@ namespace States
 
         public override void Enter()
         {
-            Debug.Log("Enter Moving");
+            // Debug.Log("Enter Moving");
         }
 
         public override void FixedUpdate()
         {
-            _ctx.Rigidbody.MovePosition(_ctx.transform.position + (_ctx.InputDir * _ctx.Speed) * Time.deltaTime);
+            _ctx.Rigidbody.MovePosition(_ctx.transform.position + (_ctx.InputDir * _ctx.Speed) * Time.fixedDeltaTime);
         }
         
         public override void Exit()
         {
-            Debug.Log("Exit Moving");
+            // Debug.Log("Exit Moving");
         }
     }
     
     public class PlayerRunningState : PlayerMovementBaseState
     {
-        private float runSpeed = 10;
         public PlayerRunningState(PlayerMovement currCtx, PlayerMovementStateFactory factory, bool isRootState = false) 
             : base(currCtx, factory, isRootState) {}
 
         public override void Enter()
         {
-            Debug.Log("Enter Running");
+            // Debug.Log("Enter Running");
+        }
+
+        public override void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                SwitchState(_factory.Sliding());
+            }
         }
 
         public override void FixedUpdate()
         {
-            _ctx.Rigidbody.MovePosition(_ctx.transform.position + (_ctx.InputDir * _ctx.RunSpeed) * Time.deltaTime);
+            _ctx.Rigidbody.MovePosition(_ctx.transform.position + (_ctx.InputDir * _ctx.RunSpeed) * Time.fixedDeltaTime);
         }
         
         public override void Exit()
         {
-            Debug.Log("Exit Running");
+            // Debug.Log("Exit Running");
+        }
+    }
+    
+    public class PlayerSlidingState : PlayerMovementBaseState
+    {
+        private Vector3 slideDir;
+        private float startSlideAt;
+        private float slideDuration = 1F;
+        
+        public PlayerSlidingState(PlayerMovement currCtx, PlayerMovementStateFactory factory, bool isRootState = false) 
+            : base(currCtx, factory, isRootState) {}
+
+        public override void Enter()
+        {
+            Debug.Log("Enter Slide");
+            _ctx.transform.localScale = new Vector3(1, 0.5F, 1);
+
+            slideDir = _ctx.InputDir;
+            startSlideAt = Time.time;
+        }
+
+        public override void FixedUpdate()
+        {
+            if (Time.time <= startSlideAt + slideDuration)
+            {
+                _ctx.Rigidbody.MovePosition(_ctx.transform.position + ((slideDir * _ctx.RunSpeed) + (_ctx.InputDir * 5)) * Time.fixedDeltaTime);
+            }
+            else
+            {
+                SwitchState(_factory.Grounded());
+            }
+        }
+        
+        public override void Exit()
+        {
+            _ctx.transform.localScale = new Vector3(1, 1, 1);
+
+            Debug.Log("Exit Slide");
         }
     }
 }
