@@ -8,6 +8,11 @@
         {
             _currCtx = currCtx;
         }
+        
+        public PlayerMovementBaseState Grounded()
+        {
+            return new PlayerGroundedState(_currCtx, this, true);
+        }
 
         public PlayerMovementBaseState Idle()
         {
@@ -17,6 +22,11 @@
         public PlayerMovingState Moving()
         {
             return new PlayerMovingState(_currCtx, this);
+        }
+        
+        public PlayerRunningState Running()
+        {
+            return new PlayerRunningState(_currCtx, this);
         }
     }
 }

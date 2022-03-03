@@ -10,6 +10,11 @@ public class PlayerMovement : MonoBehaviour
     public float Speed = 5f;
     
     /// <summary>
+    /// The speed at which the player can run on "Sprint" around
+    /// </summary>
+    public float RunSpeed = 10f;
+    
+    /// <summary>
     /// The current movement state of the player
     /// </summary>
     private PlayerMovementBaseState _currentMovementState;
@@ -19,10 +24,15 @@ public class PlayerMovement : MonoBehaviour
         set => _currentMovementState = value;
     }
 
+    /// <summary>
+    /// The instance of the player movement state factories
+    /// </summary>
     private PlayerMovementStateFactory _movementStates;
 
     public Vector3 InputDir { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
+
+    public string test;
     
     private void Start()
     {
@@ -30,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
 
         _movementStates = new PlayerMovementStateFactory(this);
         
-        _currentMovementState = _movementStates.Idle();
+        _currentMovementState = _movementStates.Grounded();
         _currentMovementState.Enter();
     }
 
@@ -40,6 +50,8 @@ public class PlayerMovement : MonoBehaviour
         
         // update state
         _currentMovementState.Update();
+
+        test = _currentMovementState.GetType().ToString();
     }
 
     private void FixedUpdate()
