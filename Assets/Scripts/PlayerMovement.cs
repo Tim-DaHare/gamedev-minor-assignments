@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
     public Vector3 InputDir { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
 
-    public Vector3 test;
+    // public Vector3 test;
     
     private void Start()
     {
@@ -48,10 +48,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        InputDir = Quaternion.FromToRotation(cam.up, Vector3.up) * cam.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
-        // InputDir = Quaternion.Euler(0, cam.transform.rotation.y, 0) * cam.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
+        var input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        InputDir = Vector3.ProjectOnPlane(cam.TransformDirection(input), Vector3.up);
 
-        test = InputDir;
+        transform.forward = InputDir;
+
+        // test = InputDir;
 
         // update state
         _currentMovementState.Update();
