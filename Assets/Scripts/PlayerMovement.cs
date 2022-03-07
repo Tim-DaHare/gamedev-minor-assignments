@@ -33,8 +33,6 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector3 InputDir { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
-
-    // public Vector3 test;
     
     private void Start()
     {
@@ -47,13 +45,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void Update()
-    {
-        var input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        InputDir = Vector3.ProjectOnPlane(cam.TransformDirection(input), Vector3.up);
-
-        transform.forward = InputDir;
-
-        // test = InputDir;
+    {   
+        InputDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
         // update state
         _currentMovementState.Update();
