@@ -50,6 +50,8 @@ public class PlayerMovement : MonoBehaviour
 
         // update state
         _currentMovementState.Update();
+        
+        transform.forward = InputDir;
     }
 
     private void FixedUpdate()
