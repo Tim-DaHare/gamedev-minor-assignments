@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace States
 {
@@ -26,7 +27,7 @@ namespace States
 
         public virtual void Exit() {}
 
-        public PlayerMovementBaseState getActiveState()
+        public PlayerMovementBaseState GetActiveState()
         {
             var state = _currSubState ?? this;
             while (state._currSubState != null)
@@ -37,7 +38,7 @@ namespace States
 
         protected void SwitchState(PlayerMovementBaseState newState)
         {
-            if (newState.GetType() == _ctx.CurrentMovementState.getActiveState().GetType())
+            if (newState.GetType() == _ctx.CurrentMovementState.GetActiveState().GetType())
                 return;
 
             Exit();
@@ -94,7 +95,7 @@ namespace States
 
         public override void Exit()
         {
-            _currSubState?.Exit();;
+            _currSubState?.Exit();
         }
     }
     
@@ -124,9 +125,15 @@ namespace States
             // Debug.Log("Enter Moving");
         }
 
+        public override void Update()
+        {
+            _ctx.transform.forward = _ctx.InputDir;
+        }
+
         public override void FixedUpdate()
         {
             _ctx.Rigidbody.MovePosition(_ctx.transform.position + (_ctx.InputDir * _ctx.Speed) * Time.fixedDeltaTime);
+            
         }
         
         public override void Exit()
@@ -147,6 +154,7 @@ namespace States
 
         public override void Update()
         {
+            _ctx.transform.forward = _ctx.InputDir;
             if (Input.GetKeyDown(KeyCode.C))
             {
                 SwitchState(_factory.Sliding());
@@ -166,9 +174,7 @@ namespace States
     
     public class PlayerSlidingState : PlayerMovementBaseState
     {
-        private Vector3 slideDir;
-        private float startSlideAt;
-        private float slideDuration = 1F;
+        private Vector3 _slideVel;
         
         public PlayerSlidingState(PlayerMovement currCtx, PlayerMovementStateFactory factory, bool isRootState = false) 
             : base(currCtx, factory, isRootState) {}
@@ -177,21 +183,26 @@ namespace States
         {
             Debug.Log("Enter Slide");
             _ctx.transform.localScale = new Vector3(1, 0.5F, 1);
+            
+            _slideVel = _ctx.InputDir * _ctx.RunSpeed;
+        }
 
-            slideDir = _ctx.InputDir;
-            startSlideAt = Time.time;
+        public override void Update()
+        {
+            _ctx.transform.forward = _ctx.InputDir;
         }
 
         public override void FixedUpdate()
         {
-            if (Time.time <= startSlideAt + slideDuration)
-            {
-                _ctx.Rigidbody.MovePosition(_ctx.transform.position + ((slideDir * _ctx.RunSpeed) + (_ctx.InputDir * 5)) * Time.fixedDeltaTime);
-            }
-            else
-            {
+            if (_slideVel.magnitude <= _ctx.Speed)
                 SwitchState(_factory.Grounded());
-            }
+            
+            _ctx.Rigidbody.MovePosition(_ctx.transform.position + (_slideVel * Time.fixedDeltaTime));
+            
+            _slideVel = Vector3.ClampMagnitude(
+                (_slideVel + _ctx.InputDir).normalized * (_slideVel.magnitude - 5 * Time.fixedDeltaTime), 
+                _ctx.RunSpeed
+            );
         }
         
         public override void Exit()

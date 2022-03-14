@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using States;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -33,6 +34,8 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector3 InputDir { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
+
+    [SerializeField] private Text _currStateText;
     
     private void Start()
     {
@@ -50,8 +53,8 @@ public class PlayerMovement : MonoBehaviour
 
         // update state
         _currentMovementState.Update();
-        
-        transform.forward = InputDir;
+
+        _currStateText.text = $"Current State: {_currentMovementState.GetActiveState()}";
     }
 
     private void FixedUpdate()
