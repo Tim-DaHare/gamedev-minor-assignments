@@ -80,6 +80,7 @@ MonoBehaviour:
   Speed: 5
   RunSpeed: 10
   cam: {fileID: 0}
+  _currStateText: {fileID: 0}
 --- !u!54 &1852929342
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -88,7 +89,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1913221669540251308}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 60
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 1
@@ -113,7 +114,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1913221670113982672
 Transform:
   m_ObjectHideFlags: 0
