@@ -166,9 +166,10 @@ namespace States
     
     public class PlayerSlidingState : PlayerMovementBaseState
     {
-        private Vector3 slideDir;
-        private float startSlideAt;
-        private float slideDuration = 1F;
+        // private Vector3 slideDir;
+        // private float startSlideAt;
+        // private float slideDuration = 1F;
+        private Vector3 slideVel;
         
         public PlayerSlidingState(PlayerMovement currCtx, PlayerMovementStateFactory factory, bool isRootState = false) 
             : base(currCtx, factory, isRootState) {}
@@ -178,20 +179,27 @@ namespace States
             Debug.Log("Enter Slide");
             _ctx.transform.localScale = new Vector3(1, 0.5F, 1);
 
-            slideDir = _ctx.InputDir;
-            startSlideAt = Time.time;
+            slideVel = _ctx.InputDir * _ctx.RunSpeed;
         }
 
         public override void FixedUpdate()
         {
-            if (Time.time <= startSlideAt + slideDuration)
-            {
-                _ctx.Rigidbody.MovePosition(_ctx.transform.position + ((slideDir * _ctx.RunSpeed) + (_ctx.InputDir * 5)) * Time.fixedDeltaTime);
-            }
-            else
-            {
+            if (slideVel.magnitude <= 0.1F)
                 SwitchState(_factory.Grounded());
-            }
+
+            slideVel += _ctx.InputDir;
+            
+            
+            _ctx.Rigidbody.MovePosition(_ctx.transform.position + slideVel * Time.fixedDeltaTime);
+
+            // if (Time.time <= startSlideAt + slideDuration)
+            // {
+            //     _ctx.Rigidbody.MovePosition(_ctx.transform.position + slideVel * Time.fixedDeltaTime);
+            // }
+            // else
+            // {
+            //     SwitchState(_factory.Grounded());
+            // }
         }
         
         public override void Exit()
